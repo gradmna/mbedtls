@@ -6,6 +6,6 @@ exp=_malloc,_free,_calloc,_realloc,__getSizes,_mbedtls_entropy_init,_mbedtls_ctr
 sizes=mbedtls_ssl_config,mbedtls_entropy_context,mbedtls_ctr_drbg_context
 (cd mbedtls && emmake make lib -j4)
 printf "_SSO($(sed "s/,/);_SSO(/g" <<< "$sizes"));" > sizes.c
-emcc mbedtls/library/*.a extra.c -Imbedtls/include -o $1/mbedtls.js -s MODULARIZE=1 -s EXPORT_NAME=mbedtls -Oz -s EXPORTED_FUNCTIONS=$exp -s EXPORTED_RUNTIME_METHODS=addFunction,cwrap,memory,UTF8ToString -s EXPORT_ES6=1 -s ALLOW_MEMORY_GROWTH=1 -s ENVIRONMENT=web # contrary to @urish's belief, we dont need to order anything in here! just feed it an expansion and you're good to go!
+emcc mbedtls/library/*.a extra.c -Imbedtls/include -o "$1"/mbedtls.js -s MODULARIZE=1 -s EXPORT_NAME=mbedtls -Oz -s EXPORTED_FUNCTIONS=$exp -s EXPORTED_RUNTIME_METHODS=addFunction,cwrap,memory,UTF8ToString -s EXPORT_ES6=1 -s ALLOW_MEMORY_GROWTH=1 -s ENVIRONMENT=web # contrary to @urish's belief, we dont need to order anything in here! just feed it an expansion and you're good to go!
 rm sizes.c
-mv $1/mbedtls.wasm $1/mbedtls.bin
+mv "$1"/mbedtls.wasm "$1"/mbedtls.bin
