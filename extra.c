@@ -7,7 +7,7 @@
 
 // clang-format off
 EM_JS(void, setSize, (char*nm, size_t sz), {
-	mbedtls.setSize(mbedtls.UTF8ToString(arguments[0]), sz); // |nm| not defined? func sig in js uses |charnm| instead? nayy imma just use |arguments[0]| lol
+	__mbedtls_setSize__(mbedtls.UTF8ToString(arguments[0]), arguments[1]);
 });
 // clang-format on
 
