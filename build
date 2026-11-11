@@ -2,11 +2,11 @@
 # install |emsdk| before using this piece of crap idfk
 # https://emscripten.org/docs/getting_started/downloads.html#installation-instructions-using-the-emsdk-recommended
 set -euo pipefail
-exp=_malloc,_free,_calloc,_realloc,__getSizes,_mbedtls_net_init,_mbedtls_ssl_init,_mbedtls_ssl_config_init,_psa_crypto_init
-sizes=mbedtls_ssl_config,mbedtls_ssl_context,mbedtls_net_context
+exp=_malloc,_free,_calloc,_realloc,__getSizes,_mbedtls_ssl_set_bio,_mbedtls_ssl_init,_mbedtls_ssl_config_init,_psa_crypto_init
+sizes=mbedtls_ssl_config,mbedtls_ssl_context
 (cd mbedtls && emmake make lib -j4)
 rm -f hmm.c
 touch hmm.c
 test "$(printf "$sizes" | grep -o "," | wc -l)" -le 0 || printf "_SSO(%b);" "$(sed "s/,/);_SSO(/g" <<< "$sizes")" > hmm.c
-emcc mbedtls/library/*.a extra.c -Imbedtls/include -o "$1"/mbedtls.js -s MODULARIZE=1 -s EXPORT_NAME=mbedtls -Oz -s EXPORTED_FUNCTIONS=$exp -s EXPORTED_RUNTIME_METHODS=addFunction,cwrap,memory,UTF8ToString -s EXPORT_ES6=1 -s ALLOW_MEMORY_GROWTH=1 -s ENVIRONMENT=web # contrary to @urish's belief, we dont need to order anything in here! just feed it an expansion and you're good to go!
+emcc mbedtls/library/*.a extra.c -Imbedtls/include -o "$1"/mbedtls.js -s MODULARIZE=1 -s EXPORT_NAME=mbedtls -Oz -s EXPORTED_FUNCTIONS=$exp -s EXPORTED_RUNTIME_METHODS=addFunction,memory,UTF8ToString -s EXPORT_ES6=1 -s ALLOW_MEMORY_GROWTH=1 -s ENVIRONMENT=web # contrary to @urish's belief, we dont need to order anything in here! just feed it an expansion and you're good to go!
 rm hmm.c
